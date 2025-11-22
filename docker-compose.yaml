@@ -36,7 +36,7 @@ services:
       - kafka_data:/var/lib/kafka/data
 
   moex-collector:
-    image: vielen1991/moex-collector:v1
+    image: vielen1991/moex-collector:v2
     container_name: moex-collector
     hostname: moex-collector
     networks:
