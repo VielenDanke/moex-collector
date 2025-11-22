@@ -24,13 +24,13 @@ type MoexAPIResponse struct {
 
 // Trade представляет одну очищенную сделку
 type Trade struct {
-	TradeNo   int64     `json:"tradeno"`
-	TradeTime time.Time `json:"tradetime"`
-	BoardID   string    `json:"boardid"`
-	SecID     string    `json:"secid"`
-	Price     float64   `json:"price"`
-	Quantity  int64     `json:"quantity"`
-	Value     float64   `json:"value"`
+	TradeNo   int64   `json:"tradeno"`
+	TradeTime int64   `json:"tradetime"`
+	BoardID   string  `json:"boardid"`
+	SecID     string  `json:"secid"`
+	Price     float64 `json:"price"`
+	Quantity  int64   `json:"quantity"`
+	Value     float64 `json:"value"`
 }
 
 // MoexClient - клиент для MOEX API
@@ -165,7 +165,8 @@ func mapRowToTrade(row []interface{}, cols map[string]int) (Trade, error) {
 	if err != nil {
 		return trade, err
 	}
-	trade.TradeTime, _ = time.Parse("2006-01-02 15:04:05", fmt.Sprintf("%s %s", tradeDateStr, tradeTimeStr))
+	parsedTime, _ := time.Parse("2006-01-02 15:04:05", fmt.Sprintf("%s %s", tradeDateStr, tradeTimeStr))
+	trade.TradeTime = parsedTime.Unix()
 
 	trade.BoardID, _ = getFieldString(row, cols, "BOARDID")
 	trade.SecID, _ = getFieldString(row, cols, "SECID")
