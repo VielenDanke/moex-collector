@@ -1,0 +1,29 @@
+version: '3.8'
+
+networks:
+  moex_collector:
+    driver: bridge
+
+services:
+  moex-spark:
+    image: vielen1991/moex-spark:v3
+    container_name: moex-spark
+    hostname: moex-spark
+    networks:
+      - moex_collector
+    environment:
+      SPARK_MASTER_URL: spark://spark-master:7077
+      SPARK_CASSANDRA_CONNECTION_HOST: cassandra
+      SPARK_CASSANDRA_CONNECTION_PORT: 9042
+    ports:
+      - "8000:8000"
+
+  moex-collector:
+    image: vielen1991/moex-collector:v3
+    container_name: moex-collector
+    hostname: moex-collector
+    networks:
+      - moex_collector
+    environment:
+      KAFKA_BROKER: kafka:29092
+      POLL_INTERVAL: 15s
