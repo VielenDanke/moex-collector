@@ -6,7 +6,7 @@ networks:
 
 services:
   moex-spark:
-    image: vielen1991/moex-spark:v4
+    image: vielen1991/moex-spark:v5
     container_name: moex-spark
     hostname: moex-spark
     networks:
