@@ -28,4 +28,17 @@ services:
       - moex_collector
     environment:
       KAFKA_BROKER: kafka:29092
-      POLL_INTERVAL: 15s
+      POLL_INTERVAL: 180s
+
+  moex-streamlit:
+    image: vielen1991/moex-streamlit:v1
+    container_name: moex-streamlit
+    hostname: moex-streamlit
+    networks:
+      - moex_collector
+    environment:
+      CASSANDRA_HOSTS: cassandra
+      CASSANDRA_PORT: 9042
+      KEYSPACE: moex
+    ports:
+      - "8501:8501"

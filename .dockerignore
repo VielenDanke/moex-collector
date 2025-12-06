@@ -1,0 +1,12 @@
+spark-jars
+.gitignore
+consumer.properties
+cqlsh.bash
+exec-spark-app.bash
+Dockerfile
+infra.yaml
+apps.yaml
+exec-spark-app.bash
+tables.sql
+kafka.info
+kafka_server_jaas.conf
