@@ -51,7 +51,7 @@ func NewMoexClient(baseURL string) *MoexClient {
 }
 
 // GetTrades запрашивает сделки, начиная с `fromTradeID`
-func (c *MoexClient) GetTrades(ctx context.Context, engine, market, fromTradeID string) ([]Trade, string, error) {
+func (c *MoexClient) GetTrades(ctx context.Context, engine, market, fromTradeID string, batchSize int) ([]Trade, string, error) {
 	// Ждем разрешения от rate limiter
 	if err := c.limiter.Wait(ctx); err != nil {
 		return nil, "", fmt.Errorf("контекст отменен при ожидании rate limiter: %w", err)
@@ -66,22 +66,26 @@ func (c *MoexClient) GetTrades(ctx context.Context, engine, market, fromTradeID 
 	}
 
 	q := req.URL.Query()
-	q.Add("limit", "100")  // Запрашиваем до 100 сделок
-	q.Add("reversed", "1") // Сначала новые
+	q.Add("limit", fmt.Sprintf("%d", batchSize)) // Запрашиваем до 100 сделок
+	q.Add("reversed", "1")                       // Сначала новые
 	if fromTradeID != "" {
 		q.Add("from", fromTradeID) // Ключ для уникальности
 		q.Add("till", "-1")        // "-1" используется с "from", чтобы получить сделки *после* 'from'
 	}
 	req.URL.RawQuery = q.Encode()
 
-	log.Printf("Запрос к MOEX API: %s\n", req.URL.String())
+	log.Printf("Запрос к MOEXÏ API: %s\n", req.URL.String())
 
 	// Выполняем запрос
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, "", fmt.Errorf("сетевая ошибка: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if clErr := resp.Body.Close(); clErr != nil {
+			log.Printf("Error closing response body: %v\n", clErr)
+		}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)

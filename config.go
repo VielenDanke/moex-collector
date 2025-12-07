@@ -19,6 +19,7 @@ type Config struct {
 	KafkaTopic    string        `mapstructure:"KAFKA_TOPIC"`  // Название топика
 	MoexBaseURL   string        `mapstructure:"MOEX_BASE_URL"`
 	StateFilePath string        `mapstructure:"STATE_FILE_PATH"` // Файл для сохранения ID последней сделки
+	BatchSize     int           `mapstructure:"BATCH_SIZE"`
 }
 
 // LoadConfig читает конфигурацию из переменных окружения
@@ -35,6 +36,7 @@ func LoadConfig() (*Config, error) {
 	v.SetDefault("KAFKA_PASSWORD", "admin-secret")
 	v.SetDefault("MOEX_BASE_URL", "https://iss.moex.com")
 	v.SetDefault("STATE_FILE_PATH", "./.last_trade_id")
+	v.SetDefault("BATCH_SIZE", 100)
 
 	v.AutomaticEnv() // Автоматически читать переменные окружения
 

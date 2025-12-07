@@ -61,7 +61,7 @@ func (c *Collector) Start(ctx context.Context) {
 
 // runCollectionCycle выполняет один цикл: запрос -> обработка -> отправка
 func (c *Collector) runCollectionCycle(ctx context.Context) error {
-	trades, newLastID, err := c.moexClient.GetTrades(ctx, c.cfg.Engine, c.cfg.Market, c.lastTradeID)
+	trades, newLastID, err := c.moexClient.GetTrades(ctx, c.cfg.Engine, c.cfg.Market, c.lastTradeID, c.cfg.BatchSize)
 	if err != nil {
 		return fmt.Errorf("ошибка получения сделок: %w", err)
 	}

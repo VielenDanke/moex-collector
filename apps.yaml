@@ -4,6 +4,9 @@ networks:
   moex_collector:
     driver: bridge
 
+volumes:
+  app-volume:
+
 services:
   moex-spark:
     image: vielen1991/moex-spark:v6
@@ -26,9 +29,42 @@ services:
     hostname: moex-collector
     networks:
       - moex_collector
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '50M'
+        reservations:
+          cpus: '0.25'
+          memory: '25M'
     environment:
       KAFKA_BROKER: kafka:29092
-      POLL_INTERVAL: 180s
+      POLL_INTERVAL: 1h
+      BATCH_SIZE: 1000
+      GOMEMLIMIT: '45MiB'
+    volumes:
+      - app-volume:/app
+
+  moex-collector-rust:
+    image: vielen1991/moex-collector-rust:v1
+    container_name: moex-collector-rust
+    hostname: moex-collector-rust
+    networks:
+      - moex_collector
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '50M'
+        reservations:
+          cpus: '0.25'
+          memory: '25M'
+    environment:
+      KAFKA_BROKER: kafka:29092
+      POLL_INTERVAL: 2700
+      BATCH_SIZE: 1000
+    volumes:
+      - app-volume:/app
 
   moex-streamlit:
     image: vielen1991/moex-streamlit:v1
